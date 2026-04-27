@@ -21,33 +21,27 @@ const TopicDetailPage = () => {
         pages: 1
     });
 
-    // Функция загрузки темы и сообщений
     const loadTopicData = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
             console.log('Загрузка темы с ID:', id);
             
-            // Загружаем тему (API возвращает { topic, posts } или просто topic)
             const response = await forumService.getTopic(id);
             console.log('Ответ от сервера:', response);
             
-            // Определяем структуру ответа
             let topicData, postsData;
             
             if (response.topic && response.posts) {
-                // Новая структура { topic, posts }
                 topicData = response.topic;
                 postsData = response.posts;
             } else if (response.id || response.title) {
-                // Старая структура - тема без сообщений
                 topicData = response;
                 postsData = [];
             } else {
                 throw new Error('Неправильная структура ответа от сервера');
             }
             
-            // Проверяем одобрена ли тема
             if (!topicData.is_approved && topicData.is_approved !== undefined) {
                 setError('Эта тема ожидает модерации и пока недоступна для просмотра.');
                 setTopic(topicData);
@@ -58,7 +52,6 @@ const TopicDetailPage = () => {
             setTopic(topicData);
             setPosts(postsData || []);
             
-            // Обновляем пагинацию
             setPagination(prev => ({
                 ...prev,
                 total: postsData?.length || 0,
@@ -67,8 +60,6 @@ const TopicDetailPage = () => {
             
         } catch (error) {
             console.error('Ошибка при загрузке темы:', error);
-            
-            // Проверяем тип ошибки
             if (error.response?.status === 404) {
                 setError('Тема не найдена. Возможно, она была удалена.');
             } else {
@@ -79,62 +70,44 @@ const TopicDetailPage = () => {
         }
     }, [id]);
 
-    // Загрузка данных при изменении ID
     useEffect(() => {
         loadTopicData();
     }, [loadTopicData]);
 
-    // Обработчик добавления нового сообщения
     const handleAddPost = async (postData) => {
         try {
             console.log('Добавление сообщения:', postData);
-            
-            // Добавляем topic_id в данные сообщения
             const postWithTopic = {
                 ...postData,
                 topic_id: parseInt(id)
             };
-            
             const newPost = await forumService.createPost(id, postWithTopic);
             console.log('Новое сообщение добавлено:', newPost);
-            
-            // Добавляем новое сообщение в начало списка
             setPosts(prev => [newPost, ...prev]);
-            
-            // Обновляем счетчик сообщений
             if (topic) {
                 setTopic(prev => ({
                     ...prev,
                     post_count: (prev.post_count || 0) + 1
                 }));
             }
-            
-            // Скрываем форму
             setShowPostForm(false);
-            
-            // Показываем уведомление
             setTimeout(() => {
                 alert('✅ Ваше сообщение добавлено! Оно появится после модерации.');
             }, 100);
-            
         } catch (error) {
             console.error('Ошибка при добавлении сообщения:', error);
-            
             let errorMessage = '❌ Не удалось добавить сообщение. Попробуйте позже.';
             if (error.response?.status === 401) {
                 errorMessage = '❌ Для добавления сообщения необходимо авторизоваться.';
             } else if (error.response?.data?.error) {
                 errorMessage = `❌ ${error.response.data.error}`;
             }
-            
             alert(errorMessage);
         }
     };
 
-    // Форматирование даты
     const formatDate = (dateString) => {
         if (!dateString) return 'Дата не указана';
-        
         try {
             const date = new Date(dateString);
             return date.toLocaleDateString('ru-RU', {
@@ -150,15 +123,9 @@ const TopicDetailPage = () => {
         }
     };
 
-    // Обработчик изменения страницы сообщений
     const handlePageChange = (newPage) => {
-        // Пока у нас вся пагинация на одной странице, т.к. сообщения приходят с темой
         console.log('Изменение страницы на:', newPage);
-        
-        // Если нужно реализовать пагинацию, нужно будет сделать отдельный запрос
         setPagination(prev => ({ ...prev, page: newPage }));
-        
-        // Прокручиваем к сообщениям
         window.scrollTo({ top: 400, behavior: 'smooth' });
     };
 
@@ -199,7 +166,6 @@ const TopicDetailPage = () => {
         );
     }
 
-    // Защита от undefined
     if (!topic) {
         return (
             <div className="topic-detail-page">
@@ -246,7 +212,7 @@ const TopicDetailPage = () => {
                                 </span>
                             )}
                             <span className="meta-item">
-                                <span role="img" aria-label="comments">💬</span> {topic.post_count || posts.length} сообщений
+                                <span role="img" aria-label="comments">💬</span> {topic.post_count || posts.length} ответов
                             </span>
                         </div>
                     </div>
@@ -303,7 +269,7 @@ const TopicDetailPage = () => {
                     </div>
                 )}
 
-                {/* Список сообщений */}
+                {/* Список ответов */}
                 <div className="posts-section">
                     <div className="section-header">
                         <h2>Ответы ({posts.length})</h2>
@@ -320,7 +286,7 @@ const TopicDetailPage = () => {
 
                     {posts.length === 0 ? (
                         <div className="no-posts">
-                            <p>Пока нет ответов. Будьте первым!</p>
+                            <p>Пока нет ответов. Будьте первым, кто поможет советом!</p>
                             {topic.is_approved && (
                                 <button 
                                     className="btn btn-primary"
@@ -338,7 +304,6 @@ const TopicDetailPage = () => {
                                 ))}
                             </div>
 
-                            {/* Пагинация для сообщений */}
                             {pagination.pages > 1 && (
                                 <div className="pagination">
                                     <button
@@ -349,7 +314,6 @@ const TopicDetailPage = () => {
                                     >
                                         ← Назад
                                     </button>
-                                    
                                     <div className="page-numbers">
                                         {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
                                             let pageNum;
@@ -362,7 +326,6 @@ const TopicDetailPage = () => {
                                             } else {
                                                 pageNum = pagination.page - 2 + i;
                                             }
-                                            
                                             return (
                                                 <button
                                                     key={pageNum}
@@ -375,7 +338,6 @@ const TopicDetailPage = () => {
                                             );
                                         })}
                                     </div>
-                                    
                                     <button
                                         className="pagination-btn"
                                         disabled={pagination.page === pagination.pages}
@@ -390,17 +352,22 @@ const TopicDetailPage = () => {
                     )}
                 </div>
 
-                {/* Правила комментирования */}
+                {/* Правила комментирования (адаптированы под ветеринарный форум) */}
                 <div className="commenting-rules">
-                    <h3><span role="img" aria-label="rules">📝</span> Правила комментирования</h3>
+                    <h3><span role="img" aria-label="rules">🐾</span> Правила обсуждения</h3>
                     <ul>
-                        <li>Будьте вежливы и уважительны к автору и другим участникам</li>
-                        <li>Придерживайтесь темы обсуждения</li>
-                        <li>Не размещайте ссылки на сторонние ресурсы без необходимости</li>
-                        <li>Избегайте оффтопа и флуда</li>
-                        <li>Конструктивная критика приветствуется, оскорбления запрещены</li>
-                        <li>Все сообщения проходят модерацию</li>
+                        <li>Указывайте вид, возраст, пол и вес питомца – это помогает точнее оценить ситуацию</li>
+                        <li>Опишите симптомы, когда они появились, как менялись со временем</li>
+                        <li>Если есть результаты анализов, рентген, МРТ или КТ – приложите снимки (если функция загрузки есть) или подробно опишите заключения</li>
+                        <li>Не давайте опасных советов (например, дозировку лекарств без назначения врача). Всегда рекомендуйте обратиться к очному специалисту</li>
+                        <li>Будьте вежливы и уважительны к другим участникам и врачу</li>
+                        <li>Избегайте оффтопа и флуда. Обсуждайте только здоровье животных</li>
+                        <li>Все сообщения проходят модерацию. Ответы, содержащие рекламу или опасные рекомендации, будут удалены</li>
                     </ul>
+                    <p className="rules-note">
+                        ⚠️ Важно: Дистанционная консультация на форуме не заменяет очный приём. 
+                        При острых состояниях (отказ конечностей, судороги, сильная боль) немедленно обращайтесь в ближайшую ветклинику.
+                    </p>
                 </div>
             </div>
         </div>

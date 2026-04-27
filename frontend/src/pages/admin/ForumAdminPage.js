@@ -24,18 +24,15 @@ const ForumAdminPage = () => {
                 throw new Error('Требуется авторизация');
             }
     
-            // Пробуем загрузить через два возможных эндпоинта
             let topicsUrl = 'http://localhost:5000/api/forum/admin/topics';
             let postsUrl = 'http://localhost:5000/api/forum/admin/posts';
             
             console.log('📡 Запрос тем по URL:', topicsUrl);
     
-            // Пробуем первый эндпоинт
             let topicsResponse = await fetch(topicsUrl, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
     
-            // Если не сработал, пробуем альтернативный
             if (topicsResponse.status === 404) {
                 console.log('⚠️ Первый эндпоинт не найден, пробуем альтернативный...');
                 topicsUrl = 'http://localhost:5000/api/forum/topics?all=true';
@@ -46,22 +43,18 @@ const ForumAdminPage = () => {
     
             console.log('📊 Ответ тем:', {
                 status: topicsResponse.status,
-                ok: topicsResponse.ok,
-                statusText: topicsResponse.statusText
+                ok: topicsResponse.ok
             });
     
             if (!topicsResponse.ok) {
                 const errorText = await topicsResponse.text();
                 console.error('❌ Ошибка тем:', errorText);
-                
-                // Используем демо-данные для разработки
                 throw new Error(`API endpoint not found (${topicsResponse.status}). Using demo data.`);
             }
     
             const topics = await topicsResponse.json();
             console.log('📋 Получено тем:', topics);
     
-            // Пробуем загрузить сообщения
             let postsResponse = await fetch(postsUrl, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -87,39 +80,37 @@ const ForumAdminPage = () => {
             console.error('❌ Критическая ошибка:', err);
             setError(`Ошибка: ${err.message}. Используются демо-данные.`);
             
-            // Демо-данные для разработки
+            // Демо-данные для ветеринарного форума
             setAllTopics([
                 {
                     id: 1,
-                    title: "Тестовая тема 1",
-                    content: "Это тема для тестирования",
-                    category_name: "Общие вопросы",
-                    author_name: "Админ",
+                    title: "Дисплазия тазобедренного сустава у лабрадора",
+                    content: "Собаке 2 года, хромает после нагрузок. Нужно ли делать ТПО?",
+                    category_name: "Ортопедия",
+                    author_name: "Анна",
                     created_at: new Date().toISOString(),
                     is_approved: true,
-                    views: 5
+                    views: 12
                 },
                 {
                     id: 2,
-                    title: "Тестовая тема 2",
-                    content: "Еще одна тема для теста",
-                    category_name: "Психология",
-                    author_name: "Пользователь",
+                    title: "Эпилепсия у таксы: как подобрать дозу фенобарбитала?",
+                    content: "Собака весит 8 кг, приступы 2 раза в месяц. Врач назначил, но боюсь передозировки.",
+                    category_name: "Неврология",
+                    author_name: "Дмитрий",
                     created_at: new Date().toISOString(),
                     is_approved: false,
                     views: 0
                 }
             ]);
-            
             setAllPosts([]);
         } finally {
             setLoading(false);
         }
     };
 
-    // Удалить тему
     const deleteTopic = async (id, title) => {
-        if (!window.confirm(`Удалить тему "${title}"?`)) return;
+        if (!window.confirm(`Удалить тему "${title}"? Это действие необратимо.`)) return;
 
         try {
             const token = getToken();
@@ -143,9 +134,8 @@ const ForumAdminPage = () => {
         }
     };
 
-    // Удалить сообщение
     const deletePost = async (id) => {
-        if (!window.confirm('Удалить это сообщение?')) return;
+        if (!window.confirm('Удалить это сообщение? Действие необратимо.')) return;
 
         try {
             const token = getToken();
@@ -169,7 +159,6 @@ const ForumAdminPage = () => {
         }
     };
 
-    // Форматирование даты
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('ru-RU') + ' ' + date.toLocaleTimeString('ru-RU', { 
@@ -193,8 +182,8 @@ const ForumAdminPage = () => {
     return (
         <div className="forum-admin-container">
             <div className="forum-admin-header">
-                <h1>Управление форумом</h1>
-                <p className="subtitle">Удаление любых тем и сообщений</p>
+                <h1>Управление ветеринарным форумом</h1>
+                <p className="subtitle">Удаление тем и сообщений (ортопедия, неврология, хирургия, реабилитация)</p>
                 <div className="header-actions">
                     <button onClick={loadAllForumData} className="btn-refresh">
                         🔄 Обновить
@@ -211,7 +200,6 @@ const ForumAdminPage = () => {
                 </div>
             )}
 
-            {/* Статистика */}
             <div className="forum-stats">
                 <div className="stat-card">
                     <div className="stat-number">{allTopics.length}</div>
@@ -234,7 +222,6 @@ const ForumAdminPage = () => {
                 </div>
             </div>
 
-            {/* Табы */}
             <div className="admin-tabs">
                 <button 
                     className={`tab ${activeTab === 'topics' ? 'active' : ''}`}
@@ -250,7 +237,6 @@ const ForumAdminPage = () => {
                 </button>
             </div>
 
-            {/* Вкладка всех тем */}
             {activeTab === 'topics' && (
                 <div className="forum-content">
                     <h2>Все темы форума</h2>
@@ -266,7 +252,7 @@ const ForumAdminPage = () => {
                                     <div className="item-header">
                                         <h3>{topic.title}</h3>
                                         <div className="item-meta">
-                                            <span className="category">#{topic.category_name}</span>
+                                            <span className="category">📁 {topic.category_name}</span>
                                             <span className="author">👤 {topic.author_name}</span>
                                             <span className="date">📅 {formatDate(topic.created_at)}</span>
                                             <span className="views">👁️ {topic.views || 0}</span>
@@ -277,11 +263,9 @@ const ForumAdminPage = () => {
                                             )}
                                         </div>
                                     </div>
-                                    
                                     <div className="item-content">
                                         <p>{topic.content}</p>
                                     </div>
-                                    
                                     <div className="item-actions">
                                         <button 
                                             onClick={() => deleteTopic(topic.id, topic.title)}
@@ -312,7 +296,6 @@ const ForumAdminPage = () => {
                 </div>
             )}
 
-            {/* Вкладка всех сообщений */}
             {activeTab === 'posts' && (
                 <div className="forum-content">
                     <h2>Все сообщения форума</h2>
@@ -340,11 +323,9 @@ const ForumAdminPage = () => {
                                             )}
                                         </div>
                                     </div>
-                                    
                                     <div className="item-content">
                                         <p>{post.content}</p>
                                     </div>
-                                    
                                     <div className="item-actions">
                                         <button 
                                             onClick={() => deletePost(post.id)}
@@ -375,14 +356,13 @@ const ForumAdminPage = () => {
                 </div>
             )}
 
-            {/* Информация */}
             <div className="admin-info">
-                <h3>📋 Информация</h3>
+                <h3>📋 Информация для модератора</h3>
                 <ul>
-                    <li>На этой странице можно удалять <strong>любые</strong> темы и сообщения</li>
-                    <li>Для модерации новых тем перейдите в раздел <Link to="/admin/forum/moderate">Модерация</Link></li>
-                    <li>Удаление необратимо - будьте осторожны!</li>
-                    <li>Одобренные темы отображаются с зеленой галочкой</li>
+                    <li>На этой странице можно удалять <strong>любые</strong> темы и сообщения ветеринарного форума</li>
+                    <li>Для одобрения новых тем перейдите в раздел <Link to="/admin/forum/moderate">Модерация</Link></li>
+                    <li>Удаление необратимо – будьте осторожны!</li>
+                    <li>Одобренные темы отображаются с зелёной галочкой</li>
                 </ul>
             </div>
         </div>

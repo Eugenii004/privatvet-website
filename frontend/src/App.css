@@ -1,3 +1,13 @@
+/* Глобальные переменные — ветеринарная тематика */
+:root {
+  --primary-color: #2e7d32;    /* тёмно-зелёный (здоровье, природа) */
+  --secondary-color: #f57c00;   /* оранжевый (доверие, тепло, акцент) */
+  --accent-color: #e65100;      /* тёмно-оранжевый для ховера */
+  --bg-light: #f1f8e9;          /* светлый зелёно-жёлтый фон */
+  --text-dark: #1b5e20;
+  --gray-color: #6c757d;
+}
+
 .App {
   display: flex;
   flex-direction: column;
@@ -43,7 +53,7 @@
 }
 
 .btn-primary:hover {
-  background-color: #1a2d4a;
+  background-color: var(--accent-color);
 }
 
 .btn-secondary {
@@ -52,7 +62,7 @@
 }
 
 .btn-secondary:hover {
-  background-color: #2d7a5a;
+  background-color: #e65100; /* более тёмный оранжевый */
 }
 
 /* Заголовки */

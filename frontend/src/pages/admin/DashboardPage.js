@@ -177,32 +177,32 @@ const DashboardPage = () => {
     }
   ];
 
-  // Конфигурация быстрых действий
+  // Конфигурация быстрых действий (адаптирована под ветеринарный сайт)
   const quickActionsConfig = [
     // Статьи
     {
       icon: { type: 'article', emoji: '📝' },
       title: 'Управление статьями',
-      description: 'Создание, редактирование, публикация статей',
+      description: 'Создание, редактирование, публикация ветеринарных статей',
       to: '/admin/articles'
     },
     {
       icon: { type: 'new', emoji: '➕' },
       title: 'Новая статья',
-      description: 'Создать новую статью',
+      description: 'Добавить статью по ортопедии, неврологии, хирургии',
       to: '/admin/articles/new'
     },
     // Видео
     {
       icon: { type: 'video', emoji: '🎥' },
       title: 'Управление видео',
-      description: 'Добавление и редактирование видео',
+      description: 'Добавление видео-лекций, операций, реабилитации',
       to: '/admin/videos'
     },
     {
       icon: { type: 'new', emoji: '➕' },
       title: 'Новое видео',
-      description: 'Добавить новое видео',
+      description: 'Загрузить видео с YouTube/Rutube',
       to: '/admin/videos/new'
     },
     // Форум
@@ -215,39 +215,40 @@ const DashboardPage = () => {
     {
       icon: { type: 'category', emoji: '🗂️' },
       title: 'Категории форума',
-      description: 'Управление категориями форума',
+      description: 'Ортопедия, неврология, хирургия, реабилитация',
       to: '/admin/forum/categories'
     },
-    // Контакты и настройки
+    // Контакты (убрать адрес, оставить только форму и мессенджеры)
     {
       icon: { type: 'contacts', emoji: '📞' },
-      title: 'Контакты',
-      description: 'Редактирование контактной информации',
+      title: 'Контактная информация',
+      description: 'Редактирование данных для связи (Telegram, email)',
       to: '/admin/contacts'
     },
+    // Настройки сайта (оставить для общих настроек)
     {
       icon: { type: 'settings', emoji: '⚙️' },
       title: 'Настройки сайта',
-      description: 'Основные настройки сайта',
+      description: 'Основные настройки ветеринарного сайта',
       to: '/admin/settings'
     },
-    // Заявки на консультацию
+    // Заявки на дистанционную консультацию
     {
       icon: { type: 'contacts', emoji: '📋' },
       title: 'Заявки на консультацию',
-      description: 'Просмотр и обработка заявок',
+      description: 'Просмотр и обработка заявок от владельцев животных',
       to: '/admin/contact-requests'
     }
   ];
 
-  // Конфигурация системной информации
+  // Конфигурация системной информации (изменён текст)
   const systemInfoConfig = [
     { label: 'Статус системы:', value: '✅ Работает нормально', className: 'status-ok' },
     { label: 'База данных:', value: '✅ PostgreSQL подключена' },
-    { label: 'Роль пользователя:', value: '👑 Администратор', className: 'role-admin' },
+    { label: 'Роль пользователя:', value: '👑 Администратор (ветеринарный эксперт)', className: 'role-admin' },
     { label: 'Время на сервере:', value: new Date().toLocaleString('ru-RU') },
     { label: 'API статус:', value: '✅ Все endpoints доступны' },
-    { label: 'Версия системы:', value: '1.0.0' }
+    { label: 'Версия системы:', value: '1.0.0 (ветеринарная версия)' }
   ];
 
   if (loading && !stats) {
@@ -265,7 +266,7 @@ const DashboardPage = () => {
         <div className="header-top">
           <div>
             <h1>Админ-панель</h1>
-            <p>Панель управления сайтом психолога</p>
+            <p>Панель управления сайтом ветеринарного врача-хирурга, ортопеда, невролога</p>
           </div>
           <button 
             onClick={refreshStats}
@@ -329,7 +330,7 @@ const DashboardPage = () => {
                 ))}
               </ul>
             ) : (
-              <p className="no-data">Статьи еще не созданы</p>
+              <p className="no-data">Ветеринарные статьи еще не созданы</p>
             )}
             <Link to="/admin/articles" className="view-all">
               Все статьи →
@@ -383,17 +384,17 @@ const DashboardPage = () => {
         </div>
       </section>
 
-      {/* Быстрые заметки */}
+      {/* Быстрые заметки (адаптированы) */}
       <aside className="quick-notes" aria-labelledby="quick-notes-title">
         <h3 id="quick-notes-title">📌 Быстрые заметки</h3>
         <div className="notes-content">
-          <p>✅ <strong>Готово к работе:</strong> Все основные функции реализованы</p>
+          <p>✅ <strong>Готово к работе:</strong> Все основные функции для ветеринарного сайта реализованы</p>
           <p>🎯 <strong>Следующие задачи:</strong></p>
           <ul>
-            <li>Настроить резервное копирование БД</li>
-            <li>Добавить экспорт статистики</li>
-            <li>Оптимизировать загрузку изображений</li>
-            <li>Добавить email-уведомления</li>
+            <li>Добавить раздел "Услуги" с описанием дистанционных консультаций</li>
+            <li>Настроить автоматическую отправку уведомлений в Telegram</li>
+            <li>Оптимизировать загрузку снимков МРТ/КТ для форума</li>
+            <li>Добавить форму для отправки файлов (рентген, видео движений)</li>
           </ul>
         </div>
       </aside>
@@ -401,7 +402,7 @@ const DashboardPage = () => {
   );
 };
 
-// Компонент элемента активности (должен быть определен до использования)
+// Компонент элемента активности (должен быть определён до использования)
 const ActivityItem = ({ item, type = 'article' }) => {
   const formatDate = (dateString) => {
     if (!dateString) return '';

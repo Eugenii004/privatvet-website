@@ -80,7 +80,7 @@ const PostForm = ({ onSubmit, onCancel }) => {
                         name="content"
                         value={formData.content}
                         onChange={handleChange}
-                        placeholder="Напишите ваш ответ здесь..."
+                        placeholder="Напишите ваш ответ здесь. Если вы владелец животного, укажите, пожалуйста: вид, возраст, пол, вес, какие симптомы наблюдаются, какие обследования проводились. Если вы специалист, давайте конструктивные рекомендации."
                         rows="6"
                         required
                         disabled={submitting}

@@ -19,14 +19,15 @@ const Header = () => {
                     <div className="logo">
                         <Link to="/">
                             <div className="logo-text">
-                                <div className="logo-profession">Психолог</div>
                                 <div className="logo-name">
-                                    <span className="logo-firstname">Евгений</span>
-                                    <span className="logo-lastname">Плахов</span>
+                                    Евгений Плахов
+                                </div>
+                                <div className="logo-profession">
+                                    ветеринарный хирург, ортопед, невролог
                                 </div>
                             </div>
                         </Link>
-                        <p className="tagline">Помощь в достижении гармонии и баланса</p>
+                        <p className="tagline">дистанционные консультации по всему миру</p>
                     </div>
 
                     <nav className="nav">
@@ -35,7 +36,9 @@ const Header = () => {
                         <Link to="/videos" className="nav-link">Видео</Link>
                         <Link to="/forum" className="nav-link">Форум</Link>
                         <Link to="/contacts" className="nav-link">Контакты</Link>
-                        
+                        <a href="https://zoon.ru/spb/p-veterinar/evgenij_aleksandrovich_plahov/" target="_blank" rel="noopener noreferrer" className="nav-link reviews-link">
+                            ⭐ Отзывы
+                        </a>
                         {isAuthenticated && user?.role === 'admin' && (
                             <Link to="/admin" className="admin-link">
                                 🔐 Админка
@@ -53,11 +56,7 @@ const Header = () => {
                                     Выйти
                                 </button>
                             </>
-                        ) : (
-                            <Link to="/login" className="btn-login">
-                                🔐 Вход
-                            </Link>
-                        )}
+                        ) : null}
                     </div>
                 </div>
             </div>

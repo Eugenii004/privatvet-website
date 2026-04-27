@@ -1,7 +1,7 @@
 // frontend/src/pages/admin/VideosPageAdmin.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import VideoCard from '../../components/VideoCard'; // ← ИСПРАВЛЕННЫЙ ПУТЬ
+import VideoCard from '../../components/VideoCard';
 import './VideosPageAdmin.css';
 
 const VideosPageAdmin = () => {
@@ -9,12 +9,8 @@ const VideosPageAdmin = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Получение токена
-  const getToken = () => {
-    return localStorage.getItem('token');
-  };
+  const getToken = () => localStorage.getItem('token');
 
-  // Загрузка видео
   const fetchVideos = useCallback(async () => {
     try {
       setLoading(true);
@@ -48,7 +44,6 @@ const VideosPageAdmin = () => {
     fetchVideos();
   }, [fetchVideos]);
 
-  // Удаление видео
   const handleDelete = async (video) => {
     if (!window.confirm(`Удалить видео "${video.title}"?`)) return;
     
@@ -71,7 +66,6 @@ const VideosPageAdmin = () => {
     }
   };
 
-  // Редактирование видео
   const handleEdit = (video) => {
     window.location.href = `/admin/videos/edit/${video.id}`;
   };
@@ -88,6 +82,7 @@ const VideosPageAdmin = () => {
     <div className="container videos-admin-page">
       <div className="admin-header">
         <h1>Управление видео</h1>
+        <p className="subtitle">Видео-лекции, записи операций, реабилитация, неврологические осмотры</p>
         <div className="header-actions">
           <Link to="/admin/videos/new" className="btn btn-primary">
             + Добавить видео
